@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="/angular/angular.js"></script>
+  <script>
+    angular.module('myApp.services', [])
+            .factory('User', function($http) { // injectables go here
+              var backendUrl = "http://localhost:3000"; var service = {
+                // our factory definition
+                user: {},
+                setName: function(newName) {
+                  service.user['name'] = newName;
+                },
+                setEmail: function(newEmail) {
+                  service.user['email'] = newEmail;
+                },
+                save: function() {
+                  return $http.post(backendUrl + '/users', { user: service.user
+                  }); }
+              };
+              return service; });
+
+    angular.module('myApp', ['myApp.services'])
+            .controller('MainController', function($scope, User) {
+              $scope.user = {
+                name: '',
+                email: ''
+              };
+
+
+              $scope.saveUser = function () {
+                User.setName($scope.user.name);
+                User.setEmail($scope.user.email);
+                User.save();
+              };
+            });
+  </script>
+</head>
+<body>
+<div ng-controller="MainController">
+  <input type="text" ng-model="user.name"/>
+  <input type="text" ng-model="user.email"/>
+  <button ng-click="saveUser()">Save user</button>
+</div>
+</body>
+</html>
